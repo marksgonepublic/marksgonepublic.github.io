@@ -4,17 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Twitter Feed in a Table</title>
+    <style>
+        /* Set the background color of the entire page to black */
+        body {
+            background-color: black;
+            color: white; /* Change text color to white for better contrast */
+        }
+
+        /* Style for the table to ensure it stands out */
+        table {
+            width: 50%;
+            margin-left: auto;
+            margin-right: auto;
+            background-color: white; /* Set table background to white */
+            color: black; /* Set text color inside the table to black */
+        }
+    </style>
 </head>
 <body>
-    <table style="width: 50%; margin-left: auto; margin-right: auto;">
+    <table>
         <tr>
             <td>
                 <!-- Twitter widget code goes here -->
-                <a class="twitter-timeline" href="https://twitter.com/marksgonepublic">Tweets by marksgonepublic</a>
+                <a class="twitter-timeline" href="https://twitter.com/marksgonepublic">Tweets by marksgonepublic</a> 
                 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
             </td>
         </tr>
     </table>
 </body>
 </html>
-
