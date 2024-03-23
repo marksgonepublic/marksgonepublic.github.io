@@ -5,28 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Twitter Feed in a Table</title>
     <style>
-        /* Set the background color of the entire page to black */
         body {
             background-color: black;
-            color: white; /* Change text color to white for better contrast */
+            color: white;
+            font-family: Arial, sans-serif;
         }
 
-        /* Style for the table to ensure it stands out */
         table {
             width: 50%;
             margin-left: auto;
             margin-right: auto;
-            background-color: white; /* Set table background to white */
-            color: black; /* Set text color inside the table to black */
+            background-color: white;
+            color: black;
+        }
+
+        /* Style for the navigation bar */
+        .navbar {
+            background-color: #333; /* Dark background for the navbar */
+            overflow: hidden;
+            position: fixed; /* Fixed navbar at the top of the page */
+            top: 0;
+            width: 100%;
+        }
+
+        /* Navigation links */
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+
+        /* Change the color of links on hover */
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        /* Add padding to the body to ensure it's not hidden by the fixed navbar */
+        body {
+            padding-top: 50px;
         }
     </style>
 </head>
 <body>
+
+    <!-- Navigation bar -->
+    <div class="navbar">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+    </div>
+
     <table>
         <tr>
             <td>
                 <!-- Twitter widget code goes here -->
-                <a class="twitter-timeline" href="https://twitter.com/marksgonepublic">Tweets by marksgonepublic</a> 
+                <a class="twitter-timeline" href="https://twitter.com/marksgonepublic">Tweets by marksgonepublic</a>
                 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
             </td>
         </tr>
