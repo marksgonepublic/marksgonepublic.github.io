@@ -1,10 +1,28 @@
-body { margin: 0; font-family: Arial, sans-serif; }
+body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8f8f8;
+}
 
-.slideshow { position: relative; }
+.slideshow {
+    position: relative;
+    max-width: 1024px;
+    margin: auto;
+}
 
-.slide { display: none; }
+.slide {
+    display: none;
+    text-align: center;
+}
 
-.slide img { width: 1024px; height: 640px; }
+.slide img {
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
+}
 
 .prev, .next {
     cursor: pointer;
@@ -12,17 +30,32 @@ body { margin: 0; font-family: Arial, sans-serif; }
     top: 50%;
     width: auto;
     padding: 16px;
-    margin-top: -22px;
-    color: white;
+    margin-top: -50px; /* Adjusts the vertical position to better align with the image's center */
+    color: black;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 24px;
     transition: 0.6s ease;
     border-radius: 0 3px 3px 0;
     user-select: none;
+    background-color: rgba(255,255,255,0.8);
 }
 
-.next { right: 0; border-radius: 3px 0 0 3px; }
+.next {
+    right: 0;
+    border-radius: 3px 0 0 3px;
+}
 
-.prev:hover, .next:hover { background-color: rgba(0,0,0,0.8); }
+.prev {
+    left: 0;
+    border-radius: 3px 0 0 3px;
+}
 
-.slideshow:hover { background-color: #f1f1f1; transition: background-color 0.5s ease; }
+.prev:hover, .next:hover {
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+}
+
+.slideshow:hover .slide {
+    background-color: #f1f1f1; /* This is for the hover effect, might need adjustment based on actual usage */
+    transition: background-color 0.5s ease;
+}
