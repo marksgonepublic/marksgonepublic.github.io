@@ -66,6 +66,12 @@
             letter-spacing: -0.5px;
             opacity: 0;
             animation: fadeSlideDown 0.8s ease-out 0.2s forwards;
+            cursor: default;
+            transition: text-shadow 0.3s ease;
+        }
+
+        h1:hover {
+            text-shadow: 0 0 20px rgba(192, 57, 43, 0.4);
         }
 
         .subtitle {
@@ -103,15 +109,21 @@
             height: 100%;
         }
 
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 8px 4px rgba(192, 57, 43, 0.2); }
+            50% { box-shadow: 0 0 18px 8px rgba(192, 57, 43, 0.4); }
+        }
+
         #marker-hit {
             position: absolute;
-            width: 44px;
-            height: 44px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             transform: translate(-50%, -50%);
             cursor: pointer;
             z-index: 10;
             display: none;
+            animation: pulse 2s ease-in-out infinite;
         }
 
         #marker-hit:hover::after {
@@ -183,6 +195,28 @@
                 });
             }
 
+            // Floating tech words
+            var techWords = [
+                "Claude", "Python", "Supabase", "Next.js", "React",
+                "OpenAI", "Ollama", "PostgreSQL", "VBA", "OCR",
+                "Twilio", "Flask", "Graph API", "WebGL", "AI Agents"
+            ];
+            var floatingWords = [];
+            for (var w = 0; w < techWords.length; w++) {
+                floatingWords.push({
+                    text: techWords[w],
+                    x: Math.random() * starsCanvas.width,
+                    y: Math.random() * starsCanvas.height,
+                    dx: (Math.random() - 0.5) * 0.2,
+                    dy: (Math.random() - 0.5) * 0.15,
+                    alpha: Math.random() * 0.12 + 0.04,
+                    size: Math.random() * 4 + 10
+                });
+            }
+            var nameHovered = false;
+            document.querySelector("h1").addEventListener("mouseenter", function () { nameHovered = true; });
+            document.querySelector("h1").addEventListener("mouseleave", function () { nameHovered = false; });
+
             // Shooting stars
             var shootingStars = [];
             function spawnShootingStar() {
@@ -234,6 +268,26 @@
                     ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
                     ctx.fillStyle = "rgba(255, 255, 255, " + Math.max(0, a) + ")";
                     ctx.fill();
+                }
+
+                // Floating tech words
+                for (var fw = 0; fw < floatingWords.length; fw++) {
+                    var word = floatingWords[fw];
+                    word.x += word.dx;
+                    word.y += word.dy;
+
+                    if (word.x < -100) word.x = starsCanvas.width + 50;
+                    if (word.x > starsCanvas.width + 100) word.x = -50;
+                    if (word.y < -30) word.y = starsCanvas.height + 20;
+                    if (word.y > starsCanvas.height + 30) word.y = -20;
+
+                    var targetAlpha = nameHovered ? 0.5 : word.alpha;
+                    var currentAlpha = parseFloat(word._currentAlpha || word.alpha);
+                    word._currentAlpha = currentAlpha + (targetAlpha - currentAlpha) * 0.03;
+
+                    ctx.font = word.size + "px -apple-system, sans-serif";
+                    ctx.fillStyle = "rgba(150, 180, 220, " + word._currentAlpha + ")";
+                    ctx.fillText(word.text, word.x, word.y);
                 }
 
                 // Shooting stars
