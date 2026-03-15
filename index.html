@@ -360,9 +360,31 @@
                     ctx.fill();
                 }
 
-                // Floating tech words
+                // Floating tech words - repulsion pass first
                 for (var fw = 0; fw < floatingWords.length; fw++) {
                     var word = floatingWords[fw];
+                    for (var fw2 = fw + 1; fw2 < floatingWords.length; fw2++) {
+                        var other = floatingWords[fw2];
+                        var ddx = word.x - other.x;
+                        var ddy = word.y - other.y;
+                        var dist = Math.sqrt(ddx * ddx + ddy * ddy);
+                        var minDist = (word.size + other.size) * 4;
+                        if (dist < minDist && dist > 0) {
+                            var force = (minDist - dist) / minDist * 0.02;
+                            var nx = ddx / dist;
+                            var ny = ddy / dist;
+                            word.dx += nx * force;
+                            word.dy += ny * force;
+                            other.dx -= nx * force;
+                            other.dy -= ny * force;
+                        }
+                    }
+                    // Dampen speed to keep it slow
+                    var speed = Math.sqrt(word.dx * word.dx + word.dy * word.dy);
+                    if (speed > 0.12) {
+                        word.dx *= 0.12 / speed;
+                        word.dy *= 0.12 / speed;
+                    }
                     word.x += word.dx;
                     word.y += word.dy;
 
