@@ -206,7 +206,7 @@
                 floatingWords.push({
                     text: techWords[w],
                     x: Math.random() * starsCanvas.width,
-                    y: Math.random() * starsCanvas.height,
+                    y: Math.random() * (starsCanvas.height - 200) + 200,
                     dx: (Math.random() - 0.5) * 0.2,
                     dy: (Math.random() - 0.5) * 0.15,
                     alpha: 0,
@@ -278,8 +278,8 @@
 
                     if (word.x < -100) word.x = starsCanvas.width + 50;
                     if (word.x > starsCanvas.width + 100) word.x = -50;
-                    if (word.y < -30) word.y = starsCanvas.height + 20;
-                    if (word.y > starsCanvas.height + 30) word.y = -20;
+                    if (word.y < 180) word.dy = Math.abs(word.dy);
+                    if (word.y > starsCanvas.height + 30) word.y = 200;
 
                     var targetAlpha = nameHovered ? 0.7 : 0;
                     var currentAlpha = parseFloat(word._currentAlpha || word.alpha);
