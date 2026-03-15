@@ -4,19 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mark Teasdale - Property Management, Vancouver</title>
-    <meta name="description" content="Mark Teasdale - Property Management professional in Vancouver, BC. Managing furnished and unfurnished rental properties across Greater Vancouver.">
+    <meta name="description" content="Mark Teasdale - Building AI-powered property management software in Vancouver, BC. Working with Claude, OpenAI, Python, Supabase, Next.js, React, PostgreSQL, and Ollama.">
+    <meta name="keywords" content="Mark Teasdale, Vancouver, property management, AI, Claude, OpenAI, Python, Supabase, Next.js, React, PostgreSQL, Ollama, VBA, OCR, Twilio, Flask, WebGL, AI Agents">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
     <!-- Open Graph -->
     <meta property="og:title" content="Mark Teasdale">
-    <meta property="og:description" content="Building AI-Powered Property Management Software - Vancouver, BC">
+    <meta property="og:description" content="Building AI-powered property management software with Claude, Python, Supabase, Next.js - Vancouver, BC">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://markteasdale.com">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Mark Teasdale">
-    <meta name="twitter:description" content="Building AI-Powered Property Management Software - Vancouver, BC">
+    <meta name="twitter:description" content="Building AI-powered property management software with Claude, Python, Supabase, Next.js - Vancouver, BC">
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -214,8 +215,17 @@
                 });
             }
             var nameHovered = false;
-            document.querySelector("h1").addEventListener("mouseenter", function () { nameHovered = true; });
-            document.querySelector("h1").addEventListener("mouseleave", function () { nameHovered = false; });
+            // Use mouseover/mouseout on container for broader hit area
+            var headerArea = document.querySelector(".container");
+            headerArea.addEventListener("mouseover", function (e) {
+                var rect = headerArea.getBoundingClientRect();
+                if (e.clientY < rect.top + 110) nameHovered = true;
+            });
+            headerArea.addEventListener("mouseout", function () { nameHovered = false; });
+            headerArea.addEventListener("mousemove", function (e) {
+                var rect = headerArea.getBoundingClientRect();
+                nameHovered = e.clientY < rect.top + 110;
+            });
 
             // Shooting stars
             var shootingStars = [];
@@ -281,9 +291,9 @@
                     if (word.y < 180) word.dy = Math.abs(word.dy);
                     if (word.y > starsCanvas.height + 30) word.y = 200;
 
-                    var targetAlpha = nameHovered ? 0.7 : 0;
-                    var currentAlpha = parseFloat(word._currentAlpha || word.alpha);
-                    word._currentAlpha = currentAlpha + (targetAlpha - currentAlpha) * 0.03;
+                    var targetAlpha = nameHovered ? 0.8 : 0;
+                    var currentAlpha = parseFloat(word._currentAlpha || 0);
+                    word._currentAlpha = currentAlpha + (targetAlpha - currentAlpha) * 0.08;
 
                     ctx.font = word.size + "px -apple-system, sans-serif";
                     ctx.fillStyle = "rgba(150, 180, 220, " + word._currentAlpha + ")";
