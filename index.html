@@ -258,7 +258,7 @@
                     y: Math.random() * starsCanvas.height,
                     dx: (Math.random() - 0.5) * 0.2,
                     dy: (Math.random() - 0.5) * 0.15,
-                    alpha: 0.10,
+                    alpha: 0.20,
                     size: Math.random() * 4 + 10
                 });
             }
@@ -347,7 +347,7 @@
                     if (word.y < 150) word.y = starsCanvas.height - 50;
                     if (word.y > starsCanvas.height + 30) word.y = 150;
 
-                    var targetAlpha = nameHovered ? 0.8 : 0.10;
+                    var targetAlpha = nameHovered ? 0.8 : 0.20;
                     var currentAlpha = parseFloat(word._currentAlpha || 0);
                     word._currentAlpha = currentAlpha + (targetAlpha - currentAlpha) * 0.08;
 
