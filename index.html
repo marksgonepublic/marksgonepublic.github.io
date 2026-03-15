@@ -344,8 +344,12 @@
 
                     if (word.x < -100) word.x = starsCanvas.width + 50;
                     if (word.x > starsCanvas.width + 100) word.x = -50;
-                    if (word.y < 150) word.y = starsCanvas.height - 50;
-                    if (word.y > starsCanvas.height + 30) word.y = 150;
+                    if (word.y < -30) word.y = starsCanvas.height - 50;
+                    if (word.y > starsCanvas.height + 30) word.y = 50;
+                    // Nudge away from center top (name area) only
+                    if (word.y < 120 && word.x > starsCanvas.width * 0.2 && word.x < starsCanvas.width * 0.8) {
+                        word.x += word.x < starsCanvas.width / 2 ? -1 : 1;
+                    }
 
                     var targetAlpha = nameHovered ? 0.8 : 0.20;
                     var currentAlpha = parseFloat(word._currentAlpha || 0);
