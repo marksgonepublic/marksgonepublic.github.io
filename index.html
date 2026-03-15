@@ -163,10 +163,13 @@
             .globe-wrapper {
                 width: 98vw;
                 height: 98vw;
+                margin-top: -60px;
             }
 
-            h1 { font-size: 28px; }
-            .container { padding: 16px 12px 0; }
+            h1 { font-size: 26px; }
+            .subtitle { font-size: 14px; }
+            .location { font-size: 12px; }
+            .container { padding: 10px 12px 0; }
         }
     </style>
 </head>
@@ -251,7 +254,11 @@
                 "Retrieval", "Chunking", "Reranking", "Hybrid Search"
             ];
             var floatingWords = [];
-            for (var w = 0; w < techWords.length; w++) {
+            var isMobile = window.innerWidth < 640;
+            var wordCount = isMobile ? Math.min(30, techWords.length) : techWords.length;
+            // Shuffle on mobile to get variety
+            if (isMobile) techWords.sort(function () { return Math.random() - 0.5; });
+            for (var w = 0; w < wordCount; w++) {
                 floatingWords.push({
                     text: techWords[w],
                     x: Math.random() * starsCanvas.width,
@@ -259,12 +266,23 @@
                     dx: (Math.random() - 0.5) * 0.2,
                     dy: (Math.random() - 0.5) * 0.15,
                     alpha: 0.20,
-                    size: Math.random() * 4 + 10
+                    size: isMobile ? Math.random() * 3 + 8 : Math.random() * 4 + 10
                 });
             }
             var nameHovered = false;
             var wasHovered = false;
             var headerArea = document.querySelector(".container");
+            // Tap to toggle on mobile
+            document.querySelector("h1").addEventListener("click", function () {
+                nameHovered = !nameHovered;
+                if (nameHovered) {
+                    for (var r = 0; r < floatingWords.length; r++) {
+                        floatingWords[r].x = Math.random() * starsCanvas.width;
+                        floatingWords[r].y = Math.random() * starsCanvas.height;
+                        floatingWords[r]._currentAlpha = 0;
+                    }
+                }
+            });
             headerArea.addEventListener("mouseover", function (e) {
                 var rect = headerArea.getBoundingClientRect();
                 if (e.clientY < rect.top + 110) nameHovered = true;
