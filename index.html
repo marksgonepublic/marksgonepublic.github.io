@@ -517,20 +517,21 @@
         }
         requestAnimationFrame(positionMarker);
 
-        // Teleport element + reset on back navigation
+        // Teleport element
         var teleportEl = document.getElementById("teleport");
+
+        // Reset on back navigation
         window.addEventListener("pageshow", function () {
             teleportEl.classList.remove("active");
-            teleportEl.style.transform = "translate(-50%, -50%) scale(0)";
-            teleportEl.style.opacity = "0";
+            teleportEl.removeAttribute("style");
         });
+
         markerHit.addEventListener("click", function (e) {
             e.stopPropagation();
             var rect = markerHit.getBoundingClientRect();
             var cx = rect.left + rect.width / 2;
             var cy = rect.top + rect.height / 2;
 
-            // Size needs to cover full screen from click point
             var maxDist = Math.max(
                 Math.hypot(cx, cy),
                 Math.hypot(window.innerWidth - cx, cy),
@@ -539,12 +540,16 @@
             );
             var size = maxDist * 2.2;
 
+            // Reset first
+            teleportEl.classList.remove("active");
+            teleportEl.removeAttribute("style");
+            teleportEl.offsetHeight;
+
+            // Position and animate
             teleportEl.style.left = cx + "px";
             teleportEl.style.top = cy + "px";
             teleportEl.style.width = size + "px";
             teleportEl.style.height = size + "px";
-
-            // Force reflow then animate
             teleportEl.offsetHeight;
             teleportEl.classList.add("active");
 
