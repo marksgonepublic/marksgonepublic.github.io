@@ -90,12 +90,6 @@
             height: 100%;
         }
 
-        /* Pulsing marker glow */
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 8px 2px rgba(192, 57, 43, 0.6); }
-            50% { box-shadow: 0 0 20px 8px rgba(192, 57, 43, 0.9); }
-        }
-
         #marker-hit {
             position: absolute;
             width: 44px;
@@ -105,7 +99,6 @@
             cursor: pointer;
             z-index: 10;
             display: none;
-            animation: pulse 2s ease-in-out infinite;
         }
 
         #marker-hit:hover::after {
@@ -177,10 +170,25 @@
                 });
             }
 
+            // Spaceships
+            var ships = [];
+            for (var j = 0; j < 3; j++) {
+                ships.push({
+                    x: Math.random() * starsCanvas.width,
+                    y: Math.random() * starsCanvas.height * 0.6,
+                    angle: Math.random() * Math.PI * 2,
+                    speed: Math.random() * 0.4 + 0.3,
+                    turnSpeed: (Math.random() - 0.5) * 0.005,
+                    size: Math.random() * 2 + 2,
+                    trail: []
+                });
+            }
+
             function drawStars() {
                 requestAnimationFrame(drawStars);
                 ctx.clearRect(0, 0, starsCanvas.width, starsCanvas.height);
 
+                // Stars
                 for (var i = 0; i < stars.length; i++) {
                     var s = stars[i];
                     s.x += s.dx;
@@ -196,6 +204,41 @@
                     ctx.beginPath();
                     ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
                     ctx.fillStyle = "rgba(255, 255, 255, " + Math.max(0, a) + ")";
+                    ctx.fill();
+                }
+
+                // Spaceships
+                for (var k = 0; k < ships.length; k++) {
+                    var sh = ships[k];
+                    sh.angle += sh.turnSpeed;
+                    sh.x += Math.cos(sh.angle) * sh.speed;
+                    sh.y += Math.sin(sh.angle) * sh.speed;
+
+                    // Wrap around
+                    if (sh.x < -50) sh.x = starsCanvas.width + 50;
+                    if (sh.x > starsCanvas.width + 50) sh.x = -50;
+                    if (sh.y < -50) sh.y = starsCanvas.height + 50;
+                    if (sh.y > starsCanvas.height + 50) sh.y = -50;
+
+                    // Store trail
+                    sh.trail.push({ x: sh.x, y: sh.y });
+                    if (sh.trail.length > 30) sh.trail.shift();
+
+                    // Draw trail
+                    for (var t = 0; t < sh.trail.length; t++) {
+                        var tp = sh.trail[t];
+                        var ta = (t / sh.trail.length) * 0.3;
+                        var tr = (t / sh.trail.length) * sh.size * 0.5;
+                        ctx.beginPath();
+                        ctx.arc(tp.x, tp.y, tr, 0, Math.PI * 2);
+                        ctx.fillStyle = "rgba(180, 200, 255, " + ta + ")";
+                        ctx.fill();
+                    }
+
+                    // Draw ship (small bright dot)
+                    ctx.beginPath();
+                    ctx.arc(sh.x, sh.y, sh.size, 0, Math.PI * 2);
+                    ctx.fillStyle = "rgba(200, 220, 255, 0.8)";
                     ctx.fill();
                 }
             }
