@@ -499,8 +499,13 @@
         }
         requestAnimationFrame(positionMarker);
 
-        // Teleport click handler
+        // Teleport element + reset on back navigation
         var teleportEl = document.getElementById("teleport");
+        window.addEventListener("pageshow", function () {
+            teleportEl.classList.remove("active");
+            teleportEl.style.transform = "translate(-50%, -50%) scale(0)";
+            teleportEl.style.opacity = "0";
+        });
         markerHit.addEventListener("click", function (e) {
             e.stopPropagation();
             var rect = markerHit.getBoundingClientRect();
