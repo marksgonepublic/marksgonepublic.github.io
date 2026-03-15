@@ -108,10 +108,28 @@ def update_html(words):
     pattern = r'            var techWords = \[.*?\];'
     html = re.sub(pattern, new_array, html, flags=re.DOTALL)
 
+    # Also update meta keywords with top terms
+    top_terms = words[:25]
+    keywords = "Mark Teasdale, Vancouver, property management, AI developer, " + ", ".join(top_terms) + ", proptech, real estate technology"
+    html = re.sub(
+        r'<meta name="keywords" content="[^"]*">',
+        f'<meta name="keywords" content="{keywords}">',
+        html
+    )
+
+    # Update knowsAbout in JSON-LD
+    knows = ["Artificial Intelligence", "Property Management", "PropTech"] + top_terms[:15]
+    knows_json = ", ".join(f'"{k}"' for k in knows)
+    html = re.sub(
+        r'"knowsAbout": \[.*?\]',
+        f'"knowsAbout": [{knows_json}]',
+        html
+    )
+
     with open(HTML_PATH, "w") as f:
         f.write(html)
 
-    print(f"Updated {len(words)} tech words in index.html")
+    print(f"Updated {len(words)} tech words + SEO meta in index.html")
 
 
 def git_push():
