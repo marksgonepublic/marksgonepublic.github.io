@@ -3,70 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mark Teasdale's Live Twitter Feed</title>
+    <title>Mark Teasdale - Property Management, Vancouver</title>
+    <meta name="description" content="Mark Teasdale - Property Management professional in Vancouver, BC. Managing furnished and unfurnished rental properties across Greater Vancouver.">
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            background-color: black;
-            color: white;
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        table {
-            width: 50%;
-            margin-left: auto;
-            margin-right: auto;
-            background-color: white;
-            color: black;
-        }
-
-        /* Style for the navigation bar */
-        .navbar {
-            background-color: #333; /* Dark background for the navbar */
-            overflow: hidden;
-            position: fixed; /* Fixed navbar at the top of the page */
-            top: 0;
+        .container {
+            text-align: center;
+            padding: 4px 24px 0;
             width: 100%;
         }
 
-        /* Navigation links */
-        .navbar a {
-            float: left;
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 20px;
-            text-decoration: none;
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
 
-        /* Change the color of links on hover */
-        .navbar a:hover {
-            background-color: #ddd;
-            color: black;
+        .subtitle {
+            font-size: 16px;
+            color: #888;
+            margin-bottom: 6px;
         }
 
-        /* Add padding to the body to ensure it's not hidden by the fixed navbar */
-        body {
-            padding-top: 50px;
+        .location {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: -10px;
+        }
+
+        .globe-wrapper {
+            position: relative;
+            width: min(1200px, 95vw);
+            height: min(1200px, 95vw);
+            margin: -100px auto 0;
+            cursor: grab;
+        }
+
+        .globe-wrapper:active {
+            cursor: grabbing;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        #marker-hit {
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            z-index: 10;
+            display: none;
+        }
+
+        #marker-hit:hover::after {
+            content: 'uniqueaccommodations.com';
+            position: absolute;
+            top: -36px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(192, 57, 43, 0.95);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        @media (max-width: 640px) {
+            .globe-wrapper {
+                width: 98vw;
+                height: 98vw;
+            }
+
+            h1 { font-size: 28px; }
+            .container { padding: 16px 12px 0; }
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>Mark Teasdale</h1>
+        <p class="subtitle">Building AI-Powered Property Management Software</p>
+        <p class="location">Vancouver, BC</p>
 
-    <!-- Navigation bar -->
-    <div class="navbar">
-        <a href="index.html">Home</a>        
-        <a href="images.html">Images of the day</a>
-        <a href="about.html">About</a>
+        <div class="globe-wrapper">
+            <canvas id="globe" width="2400" height="2400"></canvas>
+            <div id="marker-hit"></div>
+        </div>
     </div>
 
-    <table>
-        <tr>
-            <td>
-                <!-- Twitter widget code goes here -->
-                <a class="twitter-timeline" href="https://twitter.com/marksgonepublic">Tweets by marksgonepublic</a>
-                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-            </td>
-        </tr>
-    </table>
+    <script src="cobe.bundle.js"></script>
+    <script>
+        var _globePhi = 0;
+        var _globeReady = false;
+
+        var canvas = document.getElementById("globe");
+        var markerHit = document.getElementById("marker-hit");
+        var wrapper = document.querySelector(".globe-wrapper");
+        var phi = 0;
+        var pointerDown = false;
+        var pointerX = 0;
+        var pointerStartX = 0;
+        var velocityX = 0;
+
+        createGlobe(canvas, {
+            devicePixelRatio: 2,
+            width: 2400,
+            height: 2400,
+            phi: 0,
+            theta: 0.3,
+            dark: 1,
+            diffuse: 1.2,
+            mapSamples: 20000,
+            mapBrightness: 6,
+            baseColor: [0.3, 0.3, 0.3],
+            markerColor: [0.75, 0.22, 0.17],
+            glowColor: [0.08, 0.08, 0.08],
+            markers: [
+                { location: [49.28, -123.12], size: 0.1 }
+            ],
+            onRender: function (state) {
+                if (!pointerDown) {
+                    phi += 0.003;
+                }
+                phi += velocityX;
+                velocityX *= 0.95;
+                state.phi = phi;
+                _globePhi = phi;
+                _globeReady = true;
+            }
+        });
+
+        // COBE globe-space marker position (from COBE source: lng shifted by -PI, x negated)
+        var latRad = 49.28 * Math.PI / 180;
+        var lngAdj = -123.12 * Math.PI / 180 - Math.PI;
+        var mx = -Math.cos(latRad) * Math.cos(lngAdj);
+        var my = Math.sin(latRad);
+        var mz = Math.cos(latRad) * Math.sin(lngAdj);
+        var theta = 0.3;
+
+        function positionMarker() {
+            requestAnimationFrame(positionMarker);
+            if (!_globeReady) return;
+
+            var p = _globePhi;
+            var cp = Math.cos(p), sp = Math.sin(p);
+            var ct = Math.cos(theta), st = Math.sin(theta);
+
+            // Transform marker from globe space to camera space
+            var camX = cp * mx + sp * mz;
+            var camY = sp * st * mx + ct * my - cp * st * mz;
+            var camZ = -sp * ct * mx + st * my + cp * ct * mz;
+
+            if (camZ > 0.05) {
+                var w = canvas.clientWidth;
+                var sx = w * (camX * 0.8 + 1) / 2;
+                var sy = w * (1 - camY * 0.8) / 2;
+                markerHit.style.display = "block";
+                markerHit.style.left = sx + "px";
+                markerHit.style.top = sy + "px";
+            } else {
+                markerHit.style.display = "none";
+            }
+        }
+        requestAnimationFrame(positionMarker);
+
+        // Click handler for marker
+        markerHit.addEventListener("click", function (e) {
+            e.stopPropagation();
+            window.open("https://www.uniqueaccommodations.com", "_blank");
+        });
+
+        // Drag interaction on wrapper
+        wrapper.addEventListener("pointerdown", function (e) {
+            if (e.target === markerHit) return;
+            pointerDown = true;
+            pointerX = e.clientX;
+            pointerStartX = e.clientX;
+            wrapper.style.cursor = "grabbing";
+        });
+
+        window.addEventListener("pointerup", function () {
+            pointerDown = false;
+            wrapper.style.cursor = "grab";
+        });
+
+        window.addEventListener("pointermove", function (e) {
+            if (pointerDown) {
+                var dx = e.clientX - pointerX;
+                pointerX = e.clientX;
+                velocityX = dx / 200;
+            }
+        });
+
+        canvas.addEventListener("touchstart", function (e) {
+            if (e.touches.length === 1) {
+                pointerDown = true;
+                pointerX = e.touches[0].clientX;
+                pointerStartX = e.touches[0].clientX;
+            }
+        }, { passive: true });
+
+        window.addEventListener("touchend", function () {
+            pointerDown = false;
+        });
+
+        window.addEventListener("touchmove", function (e) {
+            if (pointerDown && e.touches.length === 1) {
+                var dx = e.touches[0].clientX - pointerX;
+                pointerX = e.touches[0].clientX;
+                velocityX = dx / 200;
+            }
+        }, { passive: true });
+    </script>
 </body>
 </html>
