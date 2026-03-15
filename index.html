@@ -200,7 +200,11 @@
             var techWords = [
                 "Claude", "Python", "Supabase", "Next.js", "React",
                 "OpenAI", "Ollama", "PostgreSQL", "VBA", "OCR",
-                "Twilio", "Flask", "Graph API", "WebGL", "AI Agents"
+                "Twilio", "Flask", "Graph API", "WebGL", "AI Agents",
+                "GPT-4", "LLM", "RAG", "Embeddings", "NLP",
+                "Machine Learning", "Neural Networks", "Automation",
+                "Computer Vision", "Prompt Engineering", "Fine-Tuning",
+                "Vector DB", "Transformers", "Deep Learning", "ChatGPT"
             ];
             var floatingWords = [];
             for (var w = 0; w < techWords.length; w++) {
@@ -210,7 +214,7 @@
                     y: Math.random() * (starsCanvas.height - 200) + 200,
                     dx: (Math.random() - 0.5) * 0.2,
                     dy: (Math.random() - 0.5) * 0.15,
-                    alpha: 0,
+                    alpha: 0.05,
                     size: Math.random() * 4 + 10
                 });
             }
@@ -291,7 +295,7 @@
                     if (word.y < 180) word.dy = Math.abs(word.dy);
                     if (word.y > starsCanvas.height + 30) word.y = 200;
 
-                    var targetAlpha = nameHovered ? 0.8 : 0;
+                    var targetAlpha = nameHovered ? 0.8 : 0.05;
                     var currentAlpha = parseFloat(word._currentAlpha || 0);
                     word._currentAlpha = currentAlpha + (targetAlpha - currentAlpha) * 0.08;
 
