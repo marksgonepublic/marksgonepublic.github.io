@@ -16,10 +16,34 @@
             overflow-x: hidden;
         }
 
+        /* Star particles background */
+        #stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
         .container {
+            position: relative;
+            z-index: 1;
             text-align: center;
             padding: 4px 24px 0;
             width: 100%;
+        }
+
+        /* Fade-in animations */
+        @keyframes fadeSlideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         h1 {
@@ -27,18 +51,24 @@
             font-weight: 600;
             margin-bottom: 8px;
             letter-spacing: -0.5px;
+            opacity: 0;
+            animation: fadeSlideDown 0.8s ease-out 0.2s forwards;
         }
 
         .subtitle {
             font-size: 16px;
             color: #888;
             margin-bottom: 6px;
+            opacity: 0;
+            animation: fadeSlideDown 0.8s ease-out 0.5s forwards;
         }
 
         .location {
             font-size: 14px;
             color: #555;
             margin-bottom: -10px;
+            opacity: 0;
+            animation: fadeSlideDown 0.8s ease-out 0.7s forwards;
         }
 
         .globe-wrapper {
@@ -47,6 +77,8 @@
             height: min(1200px, 95vw);
             margin: -100px auto 0;
             cursor: grab;
+            opacity: 0;
+            animation: fadeIn 1.5s ease-out 0.3s forwards;
         }
 
         .globe-wrapper:active {
@@ -58,6 +90,12 @@
             height: 100%;
         }
 
+        /* Pulsing marker glow */
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 8px 2px rgba(192, 57, 43, 0.6); }
+            50% { box-shadow: 0 0 20px 8px rgba(192, 57, 43, 0.9); }
+        }
+
         #marker-hit {
             position: absolute;
             width: 44px;
@@ -67,6 +105,7 @@
             cursor: pointer;
             z-index: 10;
             display: none;
+            animation: pulse 2s ease-in-out infinite;
         }
 
         #marker-hit:hover::after {
@@ -96,6 +135,8 @@
     </style>
 </head>
 <body>
+    <canvas id="stars"></canvas>
+
     <div class="container">
         <h1>Mark Teasdale</h1>
         <p class="subtitle">Building AI-Powered Property Management Software</p>
@@ -109,6 +150,59 @@
 
     <script src="cobe.bundle.js"></script>
     <script>
+        // ---- Star particles ----
+        (function () {
+            var starsCanvas = document.getElementById("stars");
+            var ctx = starsCanvas.getContext("2d");
+            var stars = [];
+            var numStars = 120;
+
+            function resize() {
+                starsCanvas.width = window.innerWidth;
+                starsCanvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener("resize", resize);
+
+            for (var i = 0; i < numStars; i++) {
+                stars.push({
+                    x: Math.random() * starsCanvas.width,
+                    y: Math.random() * starsCanvas.height,
+                    r: Math.random() * 1.5 + 0.3,
+                    dx: (Math.random() - 0.5) * 0.15,
+                    dy: (Math.random() - 0.5) * 0.1,
+                    alpha: Math.random() * 0.5 + 0.2,
+                    twinkleSpeed: Math.random() * 0.02 + 0.005,
+                    twinklePhase: Math.random() * Math.PI * 2
+                });
+            }
+
+            function drawStars() {
+                requestAnimationFrame(drawStars);
+                ctx.clearRect(0, 0, starsCanvas.width, starsCanvas.height);
+
+                for (var i = 0; i < stars.length; i++) {
+                    var s = stars[i];
+                    s.x += s.dx;
+                    s.y += s.dy;
+                    s.twinklePhase += s.twinkleSpeed;
+
+                    if (s.x < 0) s.x = starsCanvas.width;
+                    if (s.x > starsCanvas.width) s.x = 0;
+                    if (s.y < 0) s.y = starsCanvas.height;
+                    if (s.y > starsCanvas.height) s.y = 0;
+
+                    var a = s.alpha + Math.sin(s.twinklePhase) * 0.2;
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                    ctx.fillStyle = "rgba(255, 255, 255, " + Math.max(0, a) + ")";
+                    ctx.fill();
+                }
+            }
+            requestAnimationFrame(drawStars);
+        })();
+
+        // ---- Globe ----
         var _globePhi = 0;
         var _globeReady = false;
 
@@ -149,7 +243,7 @@
             }
         });
 
-        // COBE globe-space marker position (from COBE source: lng shifted by -PI, x negated)
+        // ---- Marker overlay projection ----
         var latRad = 49.28 * Math.PI / 180;
         var lngAdj = -123.12 * Math.PI / 180 - Math.PI;
         var mx = -Math.cos(latRad) * Math.cos(lngAdj);
@@ -165,7 +259,6 @@
             var cp = Math.cos(p), sp = Math.sin(p);
             var ct = Math.cos(theta), st = Math.sin(theta);
 
-            // Transform marker from globe space to camera space
             var camX = cp * mx + sp * mz;
             var camY = sp * st * mx + ct * my - cp * st * mz;
             var camZ = -sp * ct * mx + st * my + cp * ct * mz;
@@ -189,7 +282,7 @@
             window.open("https://www.uniqueaccommodations.com", "_blank");
         });
 
-        // Drag interaction on wrapper
+        // Drag interaction
         wrapper.addEventListener("pointerdown", function (e) {
             if (e.target === markerHit) return;
             pointerDown = true;
