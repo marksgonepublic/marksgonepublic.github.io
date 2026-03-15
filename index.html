@@ -237,7 +237,7 @@
                 floatingWords.push({
                     text: techWords[w],
                     x: Math.random() * starsCanvas.width,
-                    y: Math.random() * (starsCanvas.height - 200) + 200,
+                    y: Math.random() * starsCanvas.height,
                     dx: (Math.random() - 0.5) * 0.2,
                     dy: (Math.random() - 0.5) * 0.15,
                     alpha: 0.10,
@@ -258,7 +258,7 @@
                 if (nameHovered && !wasHovered) {
                     for (var r = 0; r < floatingWords.length; r++) {
                         floatingWords[r].x = Math.random() * starsCanvas.width;
-                        floatingWords[r].y = Math.random() * (starsCanvas.height - 200) + 200;
+                        floatingWords[r].y = Math.random() * starsCanvas.height;
                         floatingWords[r]._currentAlpha = 0;
                     }
                 }
@@ -326,8 +326,12 @@
 
                     if (word.x < -100) word.x = starsCanvas.width + 50;
                     if (word.x > starsCanvas.width + 100) word.x = -50;
-                    if (word.y < 180) word.dy = Math.abs(word.dy);
-                    if (word.y > starsCanvas.height + 30) word.y = 200;
+                    if (word.y < -30) word.y = starsCanvas.height + 20;
+                    if (word.y > starsCanvas.height + 30) word.y = -20;
+                    // Push away from center top (name area)
+                    if (word.y < 120 && word.x > starsCanvas.width * 0.25 && word.x < starsCanvas.width * 0.75) {
+                        word.dy = Math.abs(word.dy) + 0.05;
+                    }
 
                     var targetAlpha = nameHovered ? 0.8 : 0.10;
                     var currentAlpha = parseFloat(word._currentAlpha || 0);
