@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mark Teasdale - Property Management, Vancouver</title>
     <meta name="description" content="Mark Teasdale - Property Management professional in Vancouver, BC. Managing furnished and unfurnished rental properties across Greater Vancouver.">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Mark Teasdale">
+    <meta property="og:description" content="Building AI-Powered Property Management Software - Vancouver, BC">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://markteasdale.com">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Mark Teasdale">
+    <meta name="twitter:description" content="Building AI-Powered Property Management Software - Vancouver, BC">
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -170,6 +183,22 @@
                 });
             }
 
+            // Shooting stars
+            var shootingStars = [];
+            function spawnShootingStar() {
+                shootingStars.push({
+                    x: Math.random() * starsCanvas.width * 0.8,
+                    y: Math.random() * starsCanvas.height * 0.4,
+                    len: Math.random() * 80 + 40,
+                    speed: Math.random() * 8 + 6,
+                    angle: Math.PI / 4 + (Math.random() - 0.5) * 0.3,
+                    alpha: 1,
+                    decay: Math.random() * 0.015 + 0.01
+                });
+                setTimeout(spawnShootingStar, Math.random() * 6000 + 3000);
+            }
+            setTimeout(spawnShootingStar, 2000);
+
             // Spaceships
             var ships = [];
             for (var j = 0; j < 3; j++) {
@@ -205,6 +234,33 @@
                     ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
                     ctx.fillStyle = "rgba(255, 255, 255, " + Math.max(0, a) + ")";
                     ctx.fill();
+                }
+
+                // Shooting stars
+                for (var m = shootingStars.length - 1; m >= 0; m--) {
+                    var ss = shootingStars[m];
+                    ss.x += Math.cos(ss.angle) * ss.speed;
+                    ss.y += Math.sin(ss.angle) * ss.speed;
+                    ss.alpha -= ss.decay;
+
+                    if (ss.alpha <= 0) {
+                        shootingStars.splice(m, 1);
+                        continue;
+                    }
+
+                    var tailX = ss.x - Math.cos(ss.angle) * ss.len;
+                    var tailY = ss.y - Math.sin(ss.angle) * ss.len;
+
+                    var grad = ctx.createLinearGradient(tailX, tailY, ss.x, ss.y);
+                    grad.addColorStop(0, "rgba(255, 255, 255, 0)");
+                    grad.addColorStop(1, "rgba(255, 255, 255, " + ss.alpha + ")");
+
+                    ctx.beginPath();
+                    ctx.moveTo(tailX, tailY);
+                    ctx.lineTo(ss.x, ss.y);
+                    ctx.strokeStyle = grad;
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
                 }
 
                 // Spaceships
