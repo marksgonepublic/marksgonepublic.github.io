@@ -326,12 +326,8 @@
 
                     if (word.x < -100) word.x = starsCanvas.width + 50;
                     if (word.x > starsCanvas.width + 100) word.x = -50;
-                    if (word.y < -30) word.y = starsCanvas.height + 20;
-                    if (word.y > starsCanvas.height + 30) word.y = -20;
-                    // Push away from center top (name area)
-                    if (word.y < 120 && word.x > starsCanvas.width * 0.25 && word.x < starsCanvas.width * 0.75) {
-                        word.dy = Math.abs(word.dy) + 0.05;
-                    }
+                    if (word.y < 150) word.y = starsCanvas.height - 50;
+                    if (word.y > starsCanvas.height + 30) word.y = 150;
 
                     var targetAlpha = nameHovered ? 0.8 : 0.10;
                     var currentAlpha = parseFloat(word._currentAlpha || 0);
