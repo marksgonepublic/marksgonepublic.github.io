@@ -140,7 +140,7 @@
         }
 
         #marker-hit:hover::after {
-            content: 'Chat with AI Mark';
+            content: 'Visit Unique Accommodations';
             position: absolute;
             top: -36px;
             left: 50%;
@@ -170,6 +170,32 @@
             transform: translate(-50%, -50%) scale(1);
             transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.1s ease;
         }
+
+        /* ---- Chat Toggle Button ---- */
+        #chat-fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: rgba(192, 57, 43, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        #chat-fab:hover {
+            transform: scale(1.1);
+            background: rgba(192, 57, 43, 1);
+        }
+        #chat-fab.chat-open { display: none; }
 
         /* ---- Constellation Chat ---- */
         #chat-container {
@@ -484,6 +510,9 @@
             <div id="marker-hit"></div>
         </div>
     </div>
+
+    <!-- Chat FAB -->
+    <button id="chat-fab" title="Chat with AI Mark">&#x1f4ac;</button>
 
     <!-- Constellation Chat -->
     <div id="chat-container" class="chat-hidden">
@@ -997,32 +1026,10 @@
             }, 750);
         }
 
-        // Marker click -> toggle chat (long-press -> teleport)
-        var _markerTimer = null;
-        var _markerLongPress = false;
-
-        markerHit.addEventListener("pointerdown", function (e) {
-            _markerLongPress = false;
-            var chatOpen = document.getElementById("chat-container").classList.contains("chat-visible");
-            if (chatOpen) return; // Don't start long-press teleport when chat is open
-            _markerTimer = setTimeout(function () {
-                _markerLongPress = true;
-                doTeleport();
-            }, 600);
-        });
-
-        markerHit.addEventListener("pointerup", function (e) {
-            clearTimeout(_markerTimer);
-            if (!_markerLongPress) {
-                e.stopPropagation();
-                if (window.toggleConstellationChat) {
-                    window.toggleConstellationChat();
-                }
-            }
-        });
-
-        markerHit.addEventListener("pointerleave", function () {
-            clearTimeout(_markerTimer);
+        // Marker click -> always teleport to uniqueaccommodations.com
+        markerHit.addEventListener("click", function (e) {
+            e.stopPropagation();
+            doTeleport();
         });
 
         // Drag interaction
@@ -1078,6 +1085,7 @@
             var chatClose = document.getElementById("chat-close");
             var chatLang = document.getElementById("chat-lang");
             var ttsToggle = document.getElementById("tts-toggle");
+            var chatFab = document.getElementById("chat-fab");
             var transmissionOverlay = document.getElementById("transmission-overlay");
             var starsCanvas = document.getElementById("stars");
 
@@ -1166,6 +1174,7 @@
                 if (isOpen) {
                     chatContainer.classList.remove("chat-hidden");
                     chatContainer.classList.add("chat-visible");
+                    chatFab.classList.add("chat-open");
                     if (history.length === 0) {
                         addBotMessage("Hello! I'm Mark's AI. Ask me anything about my work with AI, property management, or just say hi.");
                         addAIStars("greeting");
@@ -1174,6 +1183,7 @@
                 } else {
                     chatContainer.classList.remove("chat-visible");
                     chatContainer.classList.add("chat-hidden");
+                    chatFab.classList.remove("chat-open");
                 }
             }
 
@@ -1332,6 +1342,9 @@
             });
             chatClose.addEventListener("click", function () {
                 if (isOpen) toggleChat();
+            });
+            chatFab.addEventListener("click", function () {
+                if (!isOpen) toggleChat();
             });
             ttsToggle.addEventListener("click", function () {
                 ttsEnabled = !ttsEnabled;
