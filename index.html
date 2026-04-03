@@ -1003,6 +1003,8 @@
 
         markerHit.addEventListener("pointerdown", function (e) {
             _markerLongPress = false;
+            var chatOpen = document.getElementById("chat-container").classList.contains("chat-visible");
+            if (chatOpen) return; // Don't start long-press teleport when chat is open
             _markerTimer = setTimeout(function () {
                 _markerLongPress = true;
                 doTeleport();
