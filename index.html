@@ -934,10 +934,15 @@
         var pointerStartX = 0;
         var velocityX = 0;
 
+        // Size the render buffer to the REAL on-screen globe. The old fixed
+        // 2400x2400 (x2 retina = 4800px) exceeded iOS Safari's 4096px WebGL
+        // buffer cap - iPhone clamped the buffer but kept the 4800 projection,
+        // drawing the globe huge and shoved off-screen. PC was fine (16k cap).
+        var globeSide = Math.max(300, wrapper.clientWidth || 600);
         createGlobe(canvas, {
             devicePixelRatio: 2,
-            width: 2400,
-            height: 2400,
+            width: globeSide * 2,
+            height: globeSide * 2,
             phi: 0,
             theta: 0.3,
             dark: 1,
