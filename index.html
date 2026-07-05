@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Mark Teasdale | AI-Powered Property Management Software - Vancouver, BC</title>
     <meta name="description" content="Mark Teasdale builds AI-powered property management software in Vancouver, BC. Specializing in Claude, Anthropic MCP, AI Agents, RAG, Python, Supabase, Next.js, React, PostgreSQL, Ollama, LLMs, and automation for real estate.">
     <meta name="keywords" content="Mark Teasdale, Vancouver, property management, AI developer, Claude, Claude Code, Anthropic, MCP, AI Agents, Agentic AI, RAG, LLM, OpenAI, GPT, Python, Supabase, Next.js, React, PostgreSQL, Ollama, local LLM, VBA, OCR, Twilio, Flask, WebGL, machine learning, deep learning, NLP, embeddings, prompt engineering, automation, real estate technology, proptech">
@@ -361,7 +361,7 @@
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: #ddd;
-            font-size: 13px;
+            font-size: 16px; /* 16px minimum or iOS Safari force-zooms the page on focus */
             padding: 8px 12px;
             border-radius: 20px;
             outline: none;
@@ -463,7 +463,13 @@
                 right: 0;
                 bottom: 0;
                 border-radius: 16px 16px 0 0;
-                max-height: 55vh;
+                max-height: 55vh;      /* fallback */
+                max-height: 62dvh;     /* dynamic viewport: accounts for iOS keyboard/toolbars */
+            }
+
+            #chat-input-bar {
+                /* keep the input clear of the iPhone home indicator */
+                padding-bottom: calc(10px + env(safe-area-inset-bottom));
             }
 
             .transmission-text {
